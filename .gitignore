@@ -1,0 +1,10 @@
+# dependencies (ลงใหม่ด้วย npm install)
+node_modules/
+
+# secrets — credential WorldQuant (ห้าม commit เด็ดขาด)
+.env
+.mcp.json
+
+# OS junk
+Thumbs.db
+.DS_Store

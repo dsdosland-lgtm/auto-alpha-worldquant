@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "worldquant": {
+      "command": "node",
+      "args": ["./src/server.js"],
+      "env": {
+        "WQ_USERNAME": "your_email@example.com",
+        "WQ_PASSWORD": "your_password"
+      }
+    }
+  }
+}

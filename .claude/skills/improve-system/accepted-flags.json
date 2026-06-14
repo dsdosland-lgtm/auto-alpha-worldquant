@@ -1,0 +1,20 @@
+[
+ {
+  "key": "BACKLOG_EMPTY",
+  "reason": "market-reality: ไอเดียถูกใช้/ปิด verdict จบในรอบเสมอ (รอบ 44-47 researcher เติม 5/รอบแล้ว resolve หมด) — ไม่ใช่ระบบไม่ผลิตไอเดีย",
+  "date": "2026-06-13",
+  "review": "ทบทวนถ้าเปิดรอบขุดใหม่หลัง OS-fail/tier เปิด แล้ว researcher เติม backlog ไม่ได้/เสนอแต่ของชน"
+ },
+ {
+  "key": "ROI_REJECTED",
+  "reason": "market-reality: reject 63% ตามธรรมชาติของ probe ขาเดี่ยว (เก็บเฉพาะ ≥0.7) — รอบ 44-46 ใช้ ~12-14 sims/submit = คุ้ม; รอบ 47-49 reject สูงขึ้นเพราะทุก axis ปิดแล้วเป็นการ probe ปิดเคส",
+  "date": "2026-06-13",
+  "review": "ทบทวนถ้า rejected% >75 สองรอบติดในช่วงที่มีเงื่อนไขเปิดขุด (OS-fail/tier เปิด)"
+ },
+ {
+  "key": "STREAK_ZERO",
+  "reason": "market-reality (อัปเดตรอบ 49): streak 4 เกิดช่วงทุก axis ปิดด้วย direct evidence 100% (proxy-verdict สุดท้าย news12/scl12 เคลียร์แล้ว) + pool 12 ตัวอัด corr baseline 0.6+ + j2go6pmO attractor block 3 candidate ที่ผ่าน IS — ไม่ใช่ขุดไม่เป็น (รอบ 44-46 submit 3 ตัวติด)",
+  "date": "2026-06-13",
+  "review": "ถอด accept/diagnose ใหม่ ถ้า streak ยังเพิ่มหลังเงื่อนไขเปิด (j2go6pmO OS-fail แล้ว bench ถูกใช้หมด / tier เปิด) — แปลว่าพลาดของที่ควรได้"
+ }
+]

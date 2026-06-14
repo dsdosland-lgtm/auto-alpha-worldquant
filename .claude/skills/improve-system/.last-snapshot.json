@@ -1,0 +1,18 @@
+{
+  "date": "2026-06-14 09:05",
+  "M": {
+    "totalSims": 386,
+    "rejectedPct": 57,
+    "redundantPct": 10,
+    "nearMissPct": 18,
+    "passedPct": 2,
+    "submittedReg": 50,
+    "backlogNew": 0,
+    "streak": 3,
+    "lessonsLines": 141
+  },
+  "flagKeys": [
+    "BACKLOG_EMPTY",
+    "STREAK_ZERO"
+  ]
+}

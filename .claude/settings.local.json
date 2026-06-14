@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__worldquant__login",
+      "PowerShell(winget *)",
+      "PowerShell(Stop-Process *)",
+      "mcp__worldquant__get_data_fields",
+      "mcp__worldquant__get_datasets",
+      "WebSearch",
+      "WebFetch(domain:academicweb.nd.edu)",
+      "WebFetch(domain:nicholasbarberis.github.io)",
+      "mcp__worldquant__get_alpha",
+      "mcp__worldquant__list_alphas"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "worldquant"
+  ]
+}
