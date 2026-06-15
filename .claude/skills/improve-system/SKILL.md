@@ -27,6 +27,11 @@ description: ตรวจสุขภาพ + พัฒนา/แก้ไขร
   - metrics เขียน `.last-snapshot.json` (เทียบ delta รอบหน้า) + อ่าน `accepted-flags.json` (รายการ flag market-reality ที่รับรู้แล้ว — กัน cry-wolf). **โฟกัส ACTIONABLE เท่านั้น**; ACCEPTED = รับรู้แล้วข้ามได้
   - 🚩 **flag มิติ [0] DATA INTEGRITY = priority สูงสุดเสมอ** (data หาย/ขัดกัน = วินิจฉัยมิติอื่นเชื่อไม่ได้) — แก้ก่อน
 - อ่าน `data/runs/` report ล่าสุด 2-3 ตัว + `knowledge/lessons-learned.md` §0 (สถานะ)
+- 🔑 **PROACTIVE HYGIENE CHECKLIST (ทำเสมอ แม้ ACTIONABLE=0)** — hygiene เสื่อมตาม pool โตทุก 1-2 รอบ; ไม่มี flag ≠ ไม่มีอะไรทำ:
+  1. **Pool count staleness**: submitted.jsonl มี N ตัว → accepted-flags.json reasons กล่าวถึง pool ≈ N ไหม? (off >10 → refresh reason)
+  2. **Dead-dim freshness**: 3 submit ล่าสุดปิด dim อะไร? dim นั้น + family variants อยู่ใน SKILL.md `⛔ dim จองอิ่มแล้ว` แล้วไหม? (pattern: family ปิดครบแต่ไม่ encode → session ใหม่ลองซ้ำ)
+  3. **Open-dim accuracy**: SKILL.md `✅ dim ที่ยังหลุด` — ทุกตัวยังไม่ submit/ไม่ FAIL จริงๆ ไหม? (grep submitted-pool + mechanism-map)
+  4. **Count sync**: lessons §0 / submitted-pool header — ตัวเลข submitted ตรงกับ submitted.jsonl ไหม?
 
 ### 1. DIAGNOSE — audit 6 มิติ (หลักฐาน ไม่ใช่ความรู้สึก)
 ไล่ทุกมิติ เขียน **"อาการ → หลักฐาน → สมมติฐานราก"**:
@@ -78,7 +83,9 @@ description: ตรวจสุขภาพ + พัฒนา/แก้ไขร
 
 ---
 
-## Common fixes catalog (เคยเจอจริง — รอบ 27-28)
+## Common fixes catalog
+
+### Early-era (รอบ 27-45 — pool <50)
 | อาการ | ราก | fix |
 |-------|-----|-----|
 | researcher เสนอ 4 ไอเดีย variant ของ niche ล่าสุดหมด | anchoring | เพิ่ม ANTI-ANCHOR + honesty mandate (เสนอ 0 ได้) ใน agent |
@@ -89,6 +96,16 @@ description: ตรวจสุขภาพ + พัฒนา/แก้ไขร
 | corr หนีไม่ได้ด้วย conditioner/vector_neut | predictive power อยู่ใน 4-dim subspace (linear algebra) | ปิดเคส construction-escape; เหลือแค่ axis ใหม่ |
 | verdict ใน registry เป็น free-text ปนกัน | enum ไม่ถูกบังคับ | normalize เป็น passed/near-miss/rejected/redundant |
 
+### Current-era (รอบ 57-70 — pool 60+, /auto-alpha dominant)
+| อาการ | ราก | fix |
+|-------|-----|-----|
+| session ใหม่ลอง income-vs-CFO / earnings-vol / gross-margin ซ้ำ (ชน 0.74-0.91) | family ปิดครบแต่ไม่ encode ลง SKILL.md dead-dim | encode dim + family variants ทุกครั้งหลัง run (proactive hygiene #2) |
+| accepted-flags อ้าง pool เก่า → วินิจฉัยหลงทาง | pool โตแต่ reason ไม่ refresh | refresh reason ทุก key ที่กล่าวถึง pool count เมื่อ pool โต >10 (proactive hygiene #1) |
+| SKILL.md dim ที่ยังหลุด ยังมี lease-type / dim ที่ FAIL หรือ submit แล้ว | open-dim list ไม่ sync หลัง run | ลบ dim ที่ปิด (submit/FAIL) จาก open list ทุกรอบ (proactive hygiene #3) |
+| ts_av_diff(<fund>) ชน ts_rank(<fund>) เดียวกัน corr 0.83 | ข้ามโดยเชื่อว่า construction ต่าง = orthogonal เสมอ | เพิ่มกฎใน SKILL.md: ts_av_diff orthogonal เฉพาะกับ fundamental คนละตัว |
+| ROI_REDUNDANT cry-wolf ทุกรอบแม้ CORR-FIRST ถูก | flag เป็น structural saturation ไม่ใช่ agent bug | accept + note review condition (>25% หรือ pool +20) |
+| 0-queued streak นับสูงจาก /auto-alpha reports ที่ไม่มี queued: line | /auto-alpha Step 8 ไม่บังคับ queued: 0 | เพิ่ม `queued: 0` บรรทัดใน report template ของ /auto-alpha |
+
 ## Anti-patterns (อย่าทำ)
 - ❌ แก้ agent ทั้งที่รากคือ market reality → เปลือง + ไม่หาย (เช็ค decision tree ก่อน)
 - ❌ churn: แก้เยอะ ไม่ test, ไม่ verify
@@ -98,5 +115,6 @@ description: ตรวจสุขภาพ + พัฒนา/แก้ไขร
 - ❌ "ปรับ metrics ให้ดูดี" แทนแก้รากจริง
 - ❌ **accept flag เพื่อให้มันหาย** ทั้งที่ยังไม่ผ่าน decision tree (= แต่ง metrics รูปแบบหนึ่ง) — accept ได้เฉพาะ market-reality ที่พิสูจน์แล้ว + ต้องมี `review` condition
 - ❌ แก้ flag หนึ่งแล้วสร้าง flag ใหม่โดยไม่ verify (เช่น เพิ่ม row แก้ cross-file แต่ทำ dup) — รัน metrics หลังแก้เสมอ
+- ❌ **"ACTIONABLE=0 = ไม่มีอะไรทำแล้ว"** — ยังต้องผ่าน PROACTIVE HYGIENE checklist (Stage 0) เสมอ; SKILL.md dead-dim / accepted-flags / lessons counts ล้าตามเวลา แม้ไม่มี flag
 
 > เป้าหมายสุดท้าย: ทุกครั้งที่รัน skill นี้ ระบบต้อง **ฉลาดขึ้น/แกร่งขึ้นอย่างวัดได้** (flag ลด, ROI ขึ้น, หรือ knowledge คมขึ้น) — ไม่ใช่แค่ "แก้ไปงั้นๆ"

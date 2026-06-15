@@ -10,7 +10,8 @@
       "WebFetch(domain:academicweb.nd.edu)",
       "WebFetch(domain:nicholasbarberis.github.io)",
       "mcp__worldquant__get_alpha",
-      "mcp__worldquant__list_alphas"
+      "mcp__worldquant__list_alphas",
+      "PowerShell(node \".claude/skills/improve-system/metrics.js\")"
     ]
   },
   "enableAllProjectMcpServers": true,

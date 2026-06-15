@@ -1,0 +1,384 @@
+================================================================================
+auto-alpha-bg3 backlog append -- 2026-06-15  (find-alphas researcher output)
+Target: USA TOP3000 delay1 FASTEXPR
+Pool status: 70 submitted, all OS PENDING
+Strategy: ts_zscore/ts_rank on FRESH ratios x price-niche (INTERPOLATION-CORE template)
+KEY RULE: ts_zscore works only on ratios where ts_rank NOT yet submitted.
+TEMPLATE: 2*group_rank(<temporal_construction>(<fresh_ratio>,<window>),sector)+rank(<price>)
+          {INDUSTRY decay4 trunc0.08}
+================================================================================
+
+--------------------------------------------------------------------------------
+IDEA 1
+FUNDAMENTAL: PP&E Turnover Temporal Quality
+FIELD: sales (VERIFIED), ppent (VERIFIED -- net PPE, used in #60 and #63 submitted)
+EXPR:
+  2*group_rank(ts_zscore(sales/(ppent+1), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+  {INDUSTRY decay4 trunc0.08}
+  [LONG firms where sales/net-PPE is HIGH vs own 252d history]
+DIM: Fixed-asset capital utilization own-history (PP&E-SPECIFIC).
+     Distinct from ATO=sales/total_assets (#29 O09297Wv booked: different denominator, group_rank
+     cross-sectional). Distinct from depre_amort/ppent (#63: depreciation-RATE flow).
+     Distinct from (ppegt-ppent)/ppegt (#60: asset-AGE accumulation ratio, not utilization).
+WHY_FRESH:
+  ATO uses TOTAL assets (financial + intangibles + current). sales/ppent isolates fixed-capital
+  utilization only. Temporal ts_zscore vs own 252d baseline avoids industry-level capital
+  intensity differences (tech vs utilities). DR-analogy confirmed multiple times: ts_zscore
+  temporal orthogonal to group_rank cross-sectional (corr ~0.64 for DSO in #70 vs #28).
+  Lev-Thiagarajan (1993) quality signals include fixed-asset efficiency as one of 12 signals.
+  close-range niche: 8+ submitted alphas use this niche successfully for quality signals.
+RISK:
+  Moderate corr vs #29 ATO x close-range (same niche, related ratio). Estimate 0.55-0.70.
+  If >0.70 at sim, fallback: switch price niche to rev60.
+VERIFIED: YES -- ppent and sales confirmed in submitted pool.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 2
+FUNDAMENTAL: Deferred Tax Asset Ratio Temporal Quality
+FIELD: income_tax (VERIFIED -- #58 O093YWl1), pretax_income (VERIFIED -- #66 6XEkqw1O).
+       Target ratio: income_tax/(assets+1) as DTA proxy if txdfed unavailable.
+       assets (VERIFIED).
+EXPR:
+  2*group_rank(-ts_zscore(income_tax/(assets+1), 252), sector)
+  + rank((vwap-close)/vwap)
+  {INDUSTRY decay4 trunc0.08}
+  [SHORT firms where income_tax/assets is HIGH vs own history = tax burden building]
+DIM: Tax expense TEMPORAL quality (income_tax as proxy for deferred tax loading).
+     Distinct from BTD = (pretax*0.21 - income_tax)/assets (#58 O093YWl1: book-tax
+     DIFFERENCE annual flow, booked). Distinct from ETR level (dead as group_rank: sub-fail
+     large-cap per lessons). This measures accumulated tax expense vs own history baseline.
+WHY_FRESH:
+  Temporal ts_zscore construction has rescued signals that failed as cross-sectional group_rank
+  levels (DR, DSO, debt-maturity all rescued via temporal construction). HIGH income_tax/assets
+  vs own history = rising tax burden beyond peer expectations. Desai-Dharmapala 2006, Zeng 2014:
+  abnormal tax expense changes signal earnings quality issues. The temporal angle captures
+  TREND in tax burden specific to the firm's own history, not industry cross-section.
+  VWAP niche: 4 current members (#60/#61/#63/#66). 5th feasible with distinct dim.
+RISK:
+  Corr risk vs BTD #58: both use income_tax. Differentiator: temporal own-history (ts_zscore)
+  vs annual cross-sectional difference. Estimate 0.55-0.68. Corr risk vs #44 ts_rank(op-margin,756)
+  x VWAP: both VWAP but different economic dim. Estimate 0.45-0.60.
+VERIFIED: YES (fallback using income_tax) -- primary field income_tax confirmed in #58.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 3
+FUNDAMENTAL: Pension Benefit Obligation Growth Rate
+FIELD: fnd2_dbplanbnfol (VERIFIED -- pension benefit obligation, confirmed in #5 O096kVaY)
+       assets (VERIFIED)
+EXPR:
+  2*group_rank(-ts_rank(ts_delta(fnd2_dbplanbnfol, 252)/(abs(ts_delay(fnd2_dbplanbnfol,252))+1), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+  {INDUSTRY decay4 trunc0.08}
+  [SHORT firms where pension obligation GROWTH RATE is HIGH vs own temporal percentile]
+DIM: Pension obligation GROWTH RATE (2nd-order: delta-of-level / lagged-level, then ts_rank).
+     Distinct from O096kVaY #5: (fnd2_dbplanfvalpnas - fnd2_dbplanbnfol)/assets = funded
+     STATUS cross-sectional (booked). Distinct from pension-funded-status ts_rank (dead fit 0.72
+     per lessons -- that was funded-status LEVEL temporal; this is PBO GROWTH RATE temporal).
+WHY_FRESH:
+  Franzoni-Marin (2006, JF): pension obligations are systematically underpriced because disclosures
+  are complex. The GROWTH RATE of obligations (not funded status) captures accelerating future
+  liability build-up. ts_delta(PBO)/lag(PBO) = YoY growth rate. ts_rank = own-history temporal
+  percentile of the obligation growth pace. This 2nd-order ratio-of-changes construction mirrors
+  DOL #56 and SGA-stickiness #64 which both passed with this structure.
+  Slow-changing quarterly field: very low TO -> fitness formula favorable (returns needed ~0.04-0.05).
+  fnd2 dataset proven: fnd2_dbplanbnfol confirmed in submitted #5.
+RISK:
+  Corr risk vs #5 O096kVaY: fnd2 dataset overlap but funded-status level vs PBO growth rate
+  are different signals. Estimate corr 0.50-0.65.
+  fnd2 pension fields cover ~40% of large caps (DB plan firms only). Sparse coverage may cause
+  sub-universe issues. Mitigate with INDUSTRY neutralization (sector-specific pension behavior).
+VERIFIED: YES -- fnd2_dbplanbnfol confirmed used in submitted #5.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 4
+FUNDAMENTAL: Buyback Quality Ratio Temporal (buyback vs earnings capacity)
+FIELD: authorized_stock_buyback_amount (VERIFIED -- #5 O096kVaY),
+       operating_income (VERIFIED -- multiple submitted alphas)
+EXPR:
+  2*group_rank(ts_zscore(authorized_stock_buyback_amount/(abs(operating_income)+1), 252), sector)
+  + rank(-ts_delta(close,60))
+  {INDUSTRY decay4 trunc0.08}
+  [LONG firms where buyback/operating_income is HIGH vs own 252d history]
+DIM: Buyback QUALITY normalized to earnings capacity (temporal).
+     Distinct from O096kVaY #5: buyback/market_cap = valuation-normalized, group_rank
+     cross-sectional (booked). Three dimensions differ: denominator (op_income vs cap),
+     construction (ts_zscore temporal vs group_rank cross-sec), price niche (rev60 vs standalone).
+WHY_FRESH:
+  Ikenberry-Lakonishok-Vermaelen 1995, Peyer-Vermaelen 2009: quality buybacks = company buying
+  when earnings capacity is strong. buyback/op_income rising vs own history = management confident
+  in earnings sustainability (genuine undervaluation signal, not financial engineering).
+  buyback/cap reflects valuation angle; buyback/op_income reflects earnings-quality angle.
+  rev60 niche: 3 existing members (#57/#59/#64). 4th at fund-heavy 2:1 should be feasible
+  (lessons: rev60 2:1 gave corr 0.628 for REM #59, acceptable precedent).
+RISK:
+  Numerator same field as #5 (authorized_stock_buyback_amount). Corr risk with #5 despite
+  different denominator and construction. Test at simulation: if corr >0.70 vs #5, fallback
+  denominator: pretax_income or assets.
+VERIFIED: YES -- authorized_stock_buyback_amount confirmed in #5, operating_income confirmed.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 5
+FUNDAMENTAL: Net PPE Intensity Temporal (asset-light trajectory)
+FIELD: ppent (VERIFIED -- net PPE), assets (VERIFIED)
+EXPR:
+  2*group_rank(-ts_zscore(ppent/(assets+1), 252), sector)
+  + rank((vwap-close)/vwap)
+  {INDUSTRY decay4 trunc0.08}
+  [LONG firms where PPE/assets is BELOW own 252d history = becoming more asset-light]
+DIM: PP&E capital commitment trajectory (own-history temporal).
+     Distinct from asset-age (#60: (ppegt-ppent)/ppegt = depreciation accumulation ratio).
+     Distinct from depre-rate (#63: depre_amort/ppent = flow per unit of net PPE).
+     Distinct from ATO (#29: sales/assets = efficiency, not commitment intensity).
+     Distinct from PP&E turnover (IDEA 1 above: sales/ppent = utilization, here = commitment).
+WHY_FRESH:
+  ppent/assets = fraction of total assets committed to fixed capital. DECLINING vs own history
+  = firm becoming more asset-light = freeing capital for higher-return activities.
+  Novy-Marx 2013: asset-light firms earn higher returns. Temporal ts_zscore captures TRAJECTORY
+  not industry level (sector differences dominate cross-section). No pool member uses ppent/assets
+  as the primary signal -- all use ppent only in the denominator.
+  VWAP niche: 4 current members. 5th feasible with distinct dim.
+RISK:
+  Corr risk vs goodwill ts_rank #42: investment intensity family overlap. Estimate 0.50-0.65.
+  Corr risk vs NOA #11/#45: NOA captures broad balance-sheet bloat; ppent/assets is one component.
+  Estimate 0.50-0.68. Both are manageable.
+VERIFIED: YES -- ppent and assets confirmed in pool (#60 and #63 use ppent).
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 6
+FUNDAMENTAL: Net Working Capital Efficiency Temporal
+FIELD: receivable (VERIFIED -- #28/#70), inventory (VERIFIED -- #57/#59),
+       payables (UNVERIFIED name -- likely accounts_payable or fnd6_ap)
+       sales (VERIFIED)
+EXPR:
+  2*group_rank(-ts_zscore((receivable + inventory - payables)/(sales+1), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+  {INDUSTRY decay4 trunc0.08}
+  [SHORT firms where NWC/sales is HIGH vs own history = excess working capital lock-up]
+  FALLBACK (if payables field unavailable):
+  2*group_rank(-ts_zscore((receivable + inventory)/(sales+1), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+DIM: HOLISTIC working capital intensity temporal (combined cycle, own-history).
+     Distinct from DSO = AR/sales: group_rank (#28) and ts_zscore (#70) both BOOKED.
+     Distinct from inventory turnover: ts_zscore(cogs/inventory) #57 BOOKED.
+     Distinct from CCC level: tried dead as group_rank (sub-universe -0.13 per lessons).
+     Distinct from ΔDPO: #40 (payables timing change) BOOKED.
+     NWC/sales = combined (AR + inventory - payables) / sales = holistic cycle efficiency.
+WHY_FRESH:
+  CCC was dead as cross-sectional LEVEL (group_rank). ts_zscore TEMPORAL rescues signals that
+  fail as cross-sectional levels (confirmed pattern: DR, DSO, debt-maturity all rescued).
+  NWC/sales as ts_zscore temporal = own-history baseline for combined cycle intensity.
+  High NWC/sales vs own history = operational efficiency deteriorating (cycle using more of each
+  revenue dollar). close-range niche: repeated success with quality signals.
+RISK:
+  Corr risk vs #28 DSO x close-range (same niche, AR is component of NWC). Estimate 0.55-0.70.
+  Corr risk vs #70 DSO-temporal (same construction type). Estimate 0.60-0.72.
+  If corr >0.70 vs #70, switch to rev60. payables field name needs verification.
+VERIFIED: PARTIALLY -- receivable, inventory, sales confirmed. payables UNVERIFIED.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 7
+FUNDAMENTAL: Tax Expense Volatility Temporal (ETR stability quality)
+FIELD: income_tax (VERIFIED -- #58 O093YWl1),
+       pretax_income / pi (VERIFIED -- #66 6XEkqw1O uses fnd6_pifo/abs(pi))
+EXPR:
+  2*group_rank(-ts_rank(ts_std_dev(income_tax/(abs(pretax_income)+1), 756), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+  {INDUSTRY decay4 trunc0.08}
+  [SHORT firms where EFFECTIVE TAX RATE is HIGHLY VOLATILE over 3-year window vs own history]
+DIM: ETR VOLATILITY temporal (tax expense predictability quality).
+     Distinct from BTD #58: (pretax*0.21 - income_tax)/assets = LEVEL of book-tax difference flow.
+     Distinct from ETR level = income_tax/pretax (dead as group_rank level: sub-fail large-cap).
+     ETR std_dev over 756d = tax rate instability. ts_rank = own-history temporal percentile of
+     that volatility. 2nd-order construction: vol-of-ratio then temporal percentile.
+WHY_FRESH:
+  Tucker-Zarowin 2006 mechanism (earnings-smoothing #67 success): NI-vol/CFO-vol ratio measured
+  income smoothing via accruals. This is the PARALLEL signal in the TAX channel: income_tax/pretax
+  volatility = ETR instability = earnings quality via tax channel. Firms with stable ETR = lower
+  uncertainty premium = higher quality. Tax and accrual channels are distinct accounting items.
+  Same structural construction as #67 (ts_std_dev 756d then ts_rank 252d) but ratio is
+  income_tax/pretax vs income/cashflow_op. close-range niche confirmed for this type.
+RISK:
+  Corr risk vs BTD #58 (O093YWl1): both use income_tax and pretax. Key differentiator: VOLATILITY
+  of ratio vs LEVEL of difference, close-range for both. Estimate 0.55-0.70.
+  Corr risk vs earnings-smoothing #67: same 756d std_dev construction, same close-range niche.
+  Different ratio (income_tax/pretax vs income/cashflow_op). Estimate 0.50-0.65.
+VERIFIED: YES -- income_tax confirmed in #58, pretax_income (pi) confirmed in #66.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 8
+FUNDAMENTAL: Organic Intangible Intensity Temporal (reported patents/licenses/brands)
+FIELD: intangible_assets (UNVERIFIED BRAIN name -- likely fnd6_intan or fnd6_newa2v1300_intano),
+       goodwill (VERIFIED -- used as primary field in #42 qMXp367E),
+       assets (VERIFIED)
+EXPR:
+  2*group_rank(ts_zscore((intangible_assets - goodwill)/(assets+1), 252), sector)
+  + rank((vwap-close)/vwap)
+  {INDUSTRY decay4 trunc0.08}
+  [LONG firms where REPORTED organic intangibles / assets is RISING vs own history]
+  FALLBACK if goodwill subtraction unavailable:
+  2*group_rank(ts_zscore(intangible_assets/(assets+1), 252), sector) + rank((vwap-close)/vwap)
+DIM: ORGANIC INTANGIBLE INTENSITY temporal (GAAP-reported, excluding acquisition goodwill).
+     Distinct from goodwill ts_rank #42 (goodwill/assets temporal = acquisition-driven, booked).
+     Distinct from intangible-capital-stock #37 (Peters-Taylor SGA*0.3+RD*0.8 = economic
+     intangibles estimated, not GAAP reported balance sheet items -- fundamentally different).
+     Distinct from j2go6pmO #9 (org capital via lease/SGA/adv = expensed intangibles, booked).
+     (intan - goodwill) = patents, licenses, customer lists, trademarks capitalized by the firm.
+WHY_FRESH:
+  Pool captures: economic intangibles (#37 via R&D/SGA stock), acquisition intangibles (#42 via
+  goodwill), and expensed intangibles (#9 via lease/SGA/adv). MISSING: reported ORGANIC intangibles
+  that companies capitalize themselves without M&A. Lev-Sougiannis 1996, Barth et al 2001:
+  disclosed intangible assets (patents, licenses) have value relevance incremental to book value.
+  Temporal improvement predicts returns because market under-reacts to intangible quality improvement.
+  VWAP niche: 4 members. 5th feasible with fresh dim.
+RISK:
+  intan field UNVERIFIED in BRAIN. Many industrial/utility firms have intan = 0 or NaN, reducing
+  effective universe and risking sub-universe issues.
+  Corr risk vs goodwill #42: goodwill is component of intan in some filings. Subtracting reduces
+  overlap. Estimate 0.45-0.62.
+  Corr risk vs intangible-capital-stock #37: economic vs GAAP reported. Estimate 0.50-0.65.
+VERIFIED: UNVERIFIED: intangible_assets. goodwill is VERIFIED (used in #42).
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 9
+FUNDAMENTAL: Revenue-per-Employee Temporal Level (labor productivity positioning)
+FIELD: sales (VERIFIED), employee (VERIFIED -- used in #7 RRr9Yv9z and #39 zqWEWEvO)
+EXPR:
+  2*group_rank(ts_zscore(sales/(employee+1), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+  {INDUSTRY decay4 trunc0.08}
+  [LONG firms where revenue/employee is HIGH vs own 252d history]
+  CORR RISK FALLBACK (if corr >0.70 vs #39): swap to rev60 niche:
+  2*group_rank(ts_zscore(sales/(employee+1), 252), sector) + rank(-ts_delta(close,60))
+DIM: LABOR PRODUCTIVITY TEMPORAL LEVEL (own-history positioning).
+     Distinct from zqWEWEvO #39: group_rank(ts_DELTA(sales/employee,252)) = YoY CHANGE (booked).
+     Distinct from RRr9Yv9z #7: employee/ts_delay-1 = HIRING RATE change (booked).
+     ts_zscore(level) != ts_delta (they extract different information: positioning vs momentum).
+WHY_FRESH:
+  DR-analogy: ts_delta and ts_zscore of same ratio are orthogonal signals. ts_rank(DR/assets) #50
+  orthogonal to group_rank(DR/assets) #8 (corr 0.52). ts_delta(productivity) captures MOMENTUM
+  of change; ts_zscore(productivity) captures POSITIONING within own historical range. Independent
+  signals. Lev-Radhakrishnan 2005 Human Capital: revenue/employee at own-history high = firm
+  extracting maximum value from labor = quality signal. close-range confirmed for quality signals.
+RISK:
+  HIGH corr risk vs #39 zqWEWEvO (employee-productivity-delta x close-range): SAME fundamental
+  ratio (sales/employee), SAME niche (close-range). Only construction differs (ts_zscore vs group_rank
+  of delta). Could be corr 0.65-0.80. MUST use fallback (rev60 niche) if corr >0.70.
+VERIFIED: YES -- sales and employee both confirmed in submitted alphas #7 and #39.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 10
+FUNDAMENTAL: Deferred Revenue Growth Rate Temporal (revenue recognition timing)
+FIELD: drc (VERIFIED -- #50 2rKolYox), drlt (VERIFIED -- #50 2rKolYox), sales (VERIFIED)
+EXPR:
+  2*group_rank(-ts_rank(ts_delta((drc+drlt)/(sales+1), 252), 252), sector)
+  + rank(-ts_delta(close,10))
+  {INDUSTRY decay4 trunc0.08}
+  [SHORT firms where DR/sales ratio is INCREASING vs own history = aggressive future booking]
+DIM: Deferred Revenue GROWTH RATE temporal (2nd-order: delta of ratio, then own-history rank).
+     Distinct from kqKv0bZg #8: group_rank(DR/assets) = LEVEL cross-sectional demand-visibility.
+     Distinct from 2rKolYox #50: ts_rank((drc+drlt)/assets,252) = LEVEL temporal w/ assets denom.
+     Three simultaneous differences from #50: (a) delta not level, (b) sales not assets denom,
+     (c) rev10 not close-range niche.
+WHY_FRESH:
+  DR/sales rising vs own history = company accelerating customer pre-payments or slowing delivery.
+  Prakash-Sinha 2013 (The Accounting Review): deferred revenue changes relative to revenue growth
+  predict returns. 2nd-order ratio-of-changes mirrors DOL #56 and SGA-stickiness #64 success.
+  rev10 niche: 5 existing members (#23-27). DR growth is a genuine fresh dim -- capacity exists.
+RISK:
+  HIGHEST corr risk in this batch: same fields (drc+drlt) as #8 and #50. Key differentiators
+  (delta of ratio + sales denom + rev10) reduce corr, but empirical corr needs sim validation.
+  Estimate 0.60-0.75. If >0.70 vs #50, fallback: use ts_zscore construction instead of ts_rank,
+  or use close-range niche (not used by this specific signal in pool).
+VERIFIED: YES -- drc and drlt both confirmed in submitted #50.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+IDEA 11
+FUNDAMENTAL: CFO-to-Revenue Cash Margin Temporal (cash-based profitability own-history)
+FIELD: cashflow_op (VERIFIED -- standard BRAIN field), sales (VERIFIED)
+EXPR:
+  2*group_rank(ts_rank(cashflow_op/(sales+0.001), 252), sector)
+  + rank(-(close-low)/(high-low+0.001))
+  {INDUSTRY decay4 trunc0.08}
+  [LONG firms where CFO/revenue is HIGH vs own temporal percentile]
+DIM: CASH MARGIN temporal quality (CFO as fraction of revenue, own-history positioning).
+     Distinct from CFO/assets #55 omYj8Lgl (cash-ROA: booked, denominator assets).
+     Distinct from op-margin ts_rank #41/#44 (accrual-based operating income / sales: booked).
+     CFO/sales = cash-based pricing power + cost efficiency. CFO/assets = asset utilization.
+     Asset-light firms (software) have high CFO/sales but not necessarily high CFO/assets.
+WHY_FRESH:
+  Ball, Gerakos, Linnainmaa, Nikolaev 2016 (JFE): cash-based operating profitability outperforms
+  accrual-based. Pool has CFO/assets #55 but NOT CFO/sales. The denominator change is meaningful:
+  CFO/sales captures how much cash a company extracts per dollar of revenue -- a MARGIN concept.
+  CFO/assets captures how efficiently assets generate cash -- a TURNOVER concept. Different signal.
+  close-range niche: confirmed success pattern for profitability quality signals.
+  ts_rank temporal: own-history percentile of cash margin vs industry comparison.
+RISK:
+  Corr risk vs #55 (CFO/assets x rev10): different denominator and niche. Estimate 0.55-0.68.
+  Corr risk vs #41 (op-margin ts_rank x rev10): accrual vs cash profitability, different niche
+  (close-range vs rev10 for #41). Estimate 0.55-0.70.
+  Risk from lessons: "profitability dim (ROA/GP/earnings-level ชน op-margin 0.88-0.92)". CFO/sales
+  is cash-based not accrual -- estimate lower corr than gross margin would have. Needs validation.
+VERIFIED: YES -- cashflow_op and sales are standard verified BRAIN fields.
+================================================================================
+
+SUMMARY
+================================================================================
+11 ideas generated across fresh fundamental dimensions:
+
+1.  PP&E Turnover Temporal (sales/ppent ts_zscore) x close-range
+    -- ASSET EFFICIENCY (PP&E-specific, distinct from total ATO #29)
+2.  Deferred Tax Temporal (income_tax/assets ts_zscore, short) x VWAP
+    -- TAX QUALITY temporal angle (distinct from BTD LEVEL flow #58)
+3.  Pension PBO Growth Rate (ts_delta/lag ts_rank) x close-range
+    -- PENSION LIABILITY GROWTH (distinct from funded-STATUS level in #5)
+4.  Buyback Quality Ratio (buyback/op_income ts_zscore) x rev60
+    -- BUYBACK QUALITY earnings-normalized (distinct from buyback/cap #5)
+5.  PP&E Intensity Temporal (ppent/assets ts_zscore, short) x VWAP
+    -- CAPITAL COMMITMENT trajectory (distinct from depre-rate #63, asset-age #60)
+6.  Net Working Capital Temporal (NWC/sales ts_zscore, short) x close-range
+    -- HOLISTIC working capital (distinct from individual DSO/DIO/DPO, rescues dead CCC)
+7.  Tax ETR Volatility (ts_std_dev(ETR,756) ts_rank) x close-range
+    -- TAX QUALITY vol-channel (mirrors earnings-smoothing #67 in tax channel)
+8.  Organic Intangible Intensity (intan-goodwill/assets ts_zscore) x VWAP
+    -- REPORTED INTANGIBLES (distinct from goodwill #42, org-capital #9, Peters-Taylor #37)
+9.  Revenue-per-Employee Temporal Level (ts_zscore) x close-range
+    -- LABOR PRODUCTIVITY positioning (distinct from delta #39, hiring-rate #7; CORR RISK HIGH)
+10. Deferred Revenue Growth Rate (ts_delta(DR/sales) ts_rank) x rev10
+    -- REVENUE TIMING 2nd-order (distinct from DR LEVEL in #8 and #50; CORR RISK MODERATE)
+11. CFO-to-Revenue Cash Margin Temporal (ts_rank) x close-range
+    -- CASH MARGIN quality (distinct from CFO/assets #55, op-margin #41/#44)
+
+VERIFIED FIELDS (all confirmed in submitted pool):
+  ppent, sales, assets, cashflow_op, operating_income, income_tax, pretax_income,
+  authorized_stock_buyback_amount, fnd2_dbplanbnfol, employee, goodwill, drc, drlt,
+  receivable, inventory.
+
+UNVERIFIED FIELDS (with fallbacks provided):
+  intangible_assets (IDEA 8): fallback = intangible_assets without goodwill subtraction.
+  payables (IDEA 6): fallback = receivable+inventory only (drop payables term).
+
+PRIORITY ORDER (highest confidence fresh dim first, skip IDEA 9 if corr vs #39 >0.70):
+1. IDEA 1  -- PP&E Turnover Temporal (verified fields, clean from pool, reliable niche)
+2. IDEA 3  -- Pension PBO Growth Rate (fnd2 confirmed, growth vs status is clearly distinct)
+3. IDEA 7  -- Tax ETR Volatility (mirrors #67 success in tax channel, verified fields)
+4. IDEA 11 -- CFO/Revenue Cash Margin Temporal (clean field separation from CFO/assets #55)
+5. IDEA 4  -- Buyback Quality Ratio (numerator verified, 3-dimension differentiation from #5)
+6. IDEA 5  -- PP&E Intensity Temporal (verified fields, temporal not cross-sectional)
+7. IDEA 6  -- NWC Temporal (partial field risk; payables fallback available)
+8. IDEA 2  -- Tax Expense Temporal (income_tax fallback verified; rescues dead ETR level)
+9. IDEA 8  -- Organic Intangibles (intan field uncertain; coverage sparse for industrials)
+10. IDEA 9 -- Labor Productivity Level (HIGH corr risk vs #39; use rev60 fallback if needed)
+11. IDEA 10 -- DR Growth Rate (MODERATE corr risk vs #8 and #50; same fields)
+
+================================================================================

@@ -1,17 +1,18 @@
 {
-  "date": "2026-06-14 09:05",
+  "date": "2026-06-15 15:15",
   "M": {
-    "totalSims": 386,
-    "rejectedPct": 57,
-    "redundantPct": 10,
-    "nearMissPct": 18,
-    "passedPct": 2,
-    "submittedReg": 50,
+    "totalSims": 471,
+    "rejectedPct": 52,
+    "redundantPct": 15,
+    "nearMissPct": 16,
+    "passedPct": 1,
+    "submittedReg": 71,
     "backlogNew": 0,
-    "streak": 3,
-    "lessonsLines": 141
+    "streak": 9,
+    "lessonsLines": 152
   },
   "flagKeys": [
+    "ROI_REDUNDANT",
     "BACKLOG_EMPTY",
     "STREAK_ZERO"
   ]

@@ -1,20 +1,26 @@
 [
  {
   "key": "BACKLOG_EMPTY",
-  "reason": "market-reality: ไอเดียถูกใช้/ปิด verdict จบในรอบเสมอ (รอบ 44-47 researcher เติม 5/รอบแล้ว resolve หมด) — ไม่ใช่ระบบไม่ผลิตไอเดีย",
-  "date": "2026-06-13",
+  "reason": "market-reality: ไอเดียถูกใช้/ปิด verdict จบในรอบเสมอ (researcher เติม 5/รอบแล้ว resolve หมด; /auto-alpha runs สร้าง core เองแล้ว submit ทันที) — ไม่ใช่ระบบไม่ผลิตไอเดีย",
+  "date": "2026-06-15",
   "review": "ทบทวนถ้าเปิดรอบขุดใหม่หลัง OS-fail/tier เปิด แล้ว researcher เติม backlog ไม่ได้/เสนอแต่ของชน"
  },
  {
   "key": "ROI_REJECTED",
-  "reason": "market-reality: reject 63% ตามธรรมชาติของ probe ขาเดี่ยว (เก็บเฉพาะ ≥0.7) — รอบ 44-46 ใช้ ~12-14 sims/submit = คุ้ม; รอบ 47-49 reject สูงขึ้นเพราะทุก axis ปิดแล้วเป็นการ probe ปิดเคส",
-  "date": "2026-06-13",
+  "reason": "market-reality (อัปเดต 2026-06-15 หลัง auto-alpha6): reject 53% ตามธรรมชาติของ probe ขาเดี่ยว (เก็บเฉพาะ ≥0.7) — pool ตอนนี้ 67 ตัว corr baseline 0.6+; /auto-alpha runs ใช้ ~6.6 sims/submit = คุ้ม. reject สูงเพราะ pool อิ่ม (probe ใหม่ชน dim ที่ booked แล้ว ระบบ bin redundant ถูกต้องที่ corr-check) — ไม่ใช่ agent anchoring; runway ยังเปิด (accounting-quality/conservatism/coverage-ratio vein)",
+  "date": "2026-06-15",
   "review": "ทบทวนถ้า rejected% >75 สองรอบติดในช่วงที่มีเงื่อนไขเปิดขุด (OS-fail/tier เปิด)"
  },
  {
   "key": "STREAK_ZERO",
-  "reason": "market-reality (อัปเดตรอบ 49): streak 4 เกิดช่วงทุก axis ปิดด้วย direct evidence 100% (proxy-verdict สุดท้าย news12/scl12 เคลียร์แล้ว) + pool 12 ตัวอัด corr baseline 0.6+ + j2go6pmO attractor block 3 candidate ที่ผ่าน IS — ไม่ใช่ขุดไม่เป็น (รอบ 44-46 submit 3 ตัวติด)",
-  "date": "2026-06-13",
-  "review": "ถอด accept/diagnose ใหม่ ถ้า streak ยังเพิ่มหลังเงื่อนไขเปิด (j2go6pmO OS-fail แล้ว bench ถูกใช้หมด / tier เปิด) — แปลว่าพลาดของที่ควรได้"
+  "reason": "market-reality (อัปเดต 2026-06-15 v3): streak สูง (ตอนนี้ ~9) เป็น /auto-alpha runs ที่มี queued: 0 by design (submit ตรง ไม่ผ่าน queue) — ไม่ใช่ /find-alphas ได้ 0 queued. pool 71, runway เปิด (TAX-vein ยังเหลือ/governance/analyst-error dim ยังหลุด). streak จะสูงขึ้นเรื่อยๆ ตาม /auto-alpha runs = expected",
+  "date": "2026-06-15",
+  "review": "ถอด accept/diagnose ใหม่ ถ้า: (1) /find-alphas รอบใหม่ได้ 0 queued ทั้งที่ไม่ใช่ auto-submit — แปลว่าพลาดของที่ควรได้; หรือ (2) tier เปิด / OS-fail แล้ว /auto-alpha หาไม่ได้เลย"
+ },
+ {
+  "key": "ROI_REDUNDANT",
+  "reason": "market-reality (pool 71, auto-alpha8): redundant 15% (73/471) เพิ่มตาม pool size — probe ใหม่ load dim จอง (accruals-quality family, efficiency/ATO cluster, gross-margin=profitability, DPO-level=ΔDPO, income-vol=earnings-smoothing). CORR-FIRST ถูกต้อง; closures ใหม่เพิ่มใน mechanism-map แล้ว (2026-06-15) — redundancy ที่เหลือเป็น structural saturation ไม่ใช่ agent anchoring",
+  "date": "2026-06-15",
+  "review": "ทบทวนถ้า redundant% >25 สองรอบติดหลัง SKILL.md update หรือ pool ถึง 90 alphas"
  }
 ]

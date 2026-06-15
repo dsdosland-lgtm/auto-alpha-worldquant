@@ -60,6 +60,9 @@
 | 51 | `Wjg2gbEo` | **2.02** | **1.16** | 0.196 | 🟢🟢 **SUBMITTED (/auto-alpha5 #3, attempts 1, corr 0.6255)** | 2026-06-14 | **ts_rank(accrual-quality) × VWAP** ⭐ niche #48 — earnings-predictability |
 | 52 | `6XELer9J` | **2.03** | **1.27** | 0.203 | 🟢🟢 **SUBMITTED (/auto-alpha5 #4, attempts 1, corr 0.6774)** | 2026-06-14 | **ts_rank(share-dilution) × close-range** ⭐ niche #49 — equity-issuance |
 | 53 | `2rKolYox` | **1.91** | **1.11** | 0.211 | 🟢🟢 **SUBMITTED (/auto-alpha5 #5, attempts 1, corr 0.521)** | 2026-06-14 | **ts_rank(deferred-rev) × close-range** ⭐ niche #50 — 🏁 5/5 demand dim (margin 0.18) |
+| 54 | `QPQxwbb5` | **1.62** | **1.24** | 0.078 | 🟢🟢 **SUBMITTED (/auto-alpha #57, attempts 1, corr 0.5981 margin 0.10)** | 2026-06-15 | **ts_zscore(inventory-turnover) × rev60** ⭐ niche #57 — 🔑 BREAKTHROUGH #12 rev60 price-niche ที่ 4 _(หมายเหตุ: #51-56 auto-alpha7 อยู่ใน submitted-pool.md — table นี้ข้าม)_ |
+| 55 | `mLXv5rJ9` | **2.18** | **1.31** | 0.195 | 🟢🟢 **SUBMITTED (/auto-alpha6 #67, attempts 1, corr 0.6325 margin 0.0675)** | 2026-06-15 | **ts_rank(earnings-smoothing NI-vol/CFO-vol) × close-range** ⭐ CONSERVATISM dim (Tucker-Zarowin 2006) _(หมายเหตุ: #58-66 auto-alpha4/5 อยู่ใน submitted-pool.md — table นี้ข้าม)_ |
+| 56 | `XgKdrnr8` | **1.87** | **1.13** | 0.20 | 🟢🟢 **SUBMITTED (/auto-alpha8 #71, attempts 1, corr 0.6548 margin 0.0452)** | 2026-06-15 | **ts_std_dev(ETR,756d) ts_rank × close-range** ⭐ TAX-ETR-VOLATILITY dim — LONG companies with STABLE effective tax rate historically (tax-quality management signal) _(หมายเหตุ: #68-70 auto-alpha7 อยู่ใน submitted-pool.md — table นี้ข้าม)_ |
 
 ---
 
@@ -196,3 +199,74 @@
 - **ไอเดีย:** long บริษัทที่ "กำลังขยาย" เข้า Asia-Pacific (สัดส่วนรายได้ APAC เพิ่มใน 6 เดือน) = globalization/expansion drift — delta ≠ level (RRrzOrEb = ใครอยู่เอเชียมาก, ตัวนี้ = ใครกำลังเข้าเอเชีย)
 - **เส้นทาง (goal-mode, 7 sims):** Δ-APAC 252d = 1.33/0.97 near-miss → window 126d = ผ่านครบ + sub พุ่ง 0.90 · Δ-EMEA dilute ใช้ไม่ได้บน delta (corr พุ่ง 0.7375 — ตรงข้าม level!) · LatAm/auth_rank legs อ่อน
 - **⚠️ จุดต้องดูตอน review:** corr margin 0.021 — ถ้า finalize ขยับเกิน corr-guard จะกันเอง
+
+
+## 🟢 SUBMITTED #58-61 — /auto-alpha4 (2026-06-15) — ACCOUNTING-QUALITY VEIN
+
+### #58 `O093YWl1` — Book-Tax-Difference × close-range (TAX dim FRESH)
+- **expr:** `2*group_rank(ts_rank((pretax_income*0.21 - income_tax)/(assets+1), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.62 · Fitness 1.61 · TO 0.208 · sub 1.63 · **self-corr 0.5576 (margin 0.14, binding #38)** · attempts 1
+- **ไอเดีย:** book-tax difference (Desai-Dharmapala) = บริษัทที่ book income สูงกว่า taxable income มาก = aggressive accounting/tax → underperform. **TAX dimension absent จาก pool 100%** — ETR(income_tax/pretax) sub-fail large-cap แต่ BTD/assets spectacular
+
+### #59 `1YgMbrzJ` — REM-overproduction × rev60
+- **expr:** `2*group_rank(-ts_rank((cogs + ts_delta(inventory,252))/(sales+1), 252), sector) + rank(-ts_delta(close,60))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 1.88 · Fitness 1.46 · TO 0.068 · sub 0.84 · **self-corr 0.6282 (binding #57 rev60)** · attempts 1
+- **ไอเดีย:** real-earnings-management overproduction (Roychowdhury) = ผลิตเกินเพื่อ absorb fixed cost ดัน reported margin → reverse. 2nd rev60 member ต้อง fund-heavy 2:1 dilute price-leg
+
+### #60 `LLRQjVO6` — Asset-age × VWAP (STRUCTURAL)
+- **expr:** `2*group_rank(ts_rank((fnd6_newa2v1300_ppegt - ppent)/(fnd6_newa2v1300_ppegt + 1), 252), sector) + rank((vwap-close)/(vwap+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 1.79 · Fitness 1.08 · TO 0.210 · sub 1.18 · **self-corr 0.6747 (margin 0.025, binding #36)** · attempts 1
+- **ไอเดีย:** asset-age = accumulated-depreciation ratio (gross-net)/gross PPE (Jiang-Lee) — บริษัท asset เก่า = higher returns. depreciation-channel works, tangibility-LEVEL (ppent/assets) ตาย 0.54
+
+### #61 `akOpv98R` — Sloan total-accruals × VWAP
+- **expr:** `1.5*group_rank(-ts_rank((income - cashflow_op)/(assets+1), 252), sector) + rank((vwap-close)/(vwap+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 1.89 · Fitness 1.02 · TO 0.259 · sub 1.04 · **self-corr 0.6686 (binding #53)** · attempts 1
+- **ไอเดีย:** Sloan total accruals (NI − CFO)/assets — high accruals = low earnings quality → underperform. NET-INCOME numerator + VWAP niche ≠ registry-เก่า Sloan(op_income−CFO) fit 0.91. 2nd VWAP-stack กับ #60 held
+
+
+## 🟢 SUBMITTED #62-66 — /auto-alpha5 (2026-06-15) — ACCOUNTING-QUALITY + STRUCTURAL VEIN
+
+### #62 `e7rjgA8J` — Cost-of-debt × close-range (STRUCTURAL credit-pricing)
+- **expr:** `2*group_rank(ts_rank(interest_expense/(debt_st + fnd6_newa1v1300_dltt + 1), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.27 · Fitness 1.34 · TO 0.202 · sub 1.19 · **self-corr 0.613 (margin 0.09, #38)** · attempts 1
+- **ไอเดีย:** avg borrowing rate = interest_expense/(ST+LT debt) (Frank-Goyal). high cost-of-debt = risky borrower. rev60 version fit 0.87 fail → close-range (higher returns) ผ่าน
+
+### #63 `mLXv2qj9` — Abnormal-depreciation × VWAP (STRUCTURAL accounting-policy)
+- **expr:** `1*group_rank(-ts_rank(depre_amort/(ppent+1), 252), sector) + rank((vwap-close)/(vwap+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.16 · Fitness 1.10 · TO 0.368 · sub 1.01 · **self-corr 0.6616 (#47)** · attempts 1
+- **ไอเดีย:** depreciation-RATE = D&A/net-PPE (Dechow-Sloan) — high rate = conservative/big-bath → recover. FLOW ≠ asset-age #60 STOCK (mutual 0.59). price-heavy 1:1 fix sub (2:1=0.72/1.5:1=0.85/1:1=1.01)
+
+### #64 `j2g7dQW9` — SG&A-cost-stickiness × rev60 (cost-behavior asymmetry)
+- **expr:** `3*group_rank(ts_rank((ts_delta(sga_expense,252)/(ts_delay(sga_expense,252)+1)) / (ts_delta(sales,252)/(ts_delay(sales,252)+1) + 0.1), 252), sector) + rank(-ts_delta(close,60))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 1.71 · Fitness 1.26 · TO 0.057 · sub 0.74 · **self-corr 0.6653 (d57x6Gev)** · attempts 1
+- **ไอเดีย:** SGA cost-stickiness = (ΔSGA%/ΔSales%) ratio-of-changes 2nd-order (Anderson-Banker) — SGA ที่ไม่ลดตามยอดขายตก = cost misallocation. ≠ DOL #56 (EBIT elasticity) ≠ cost-structure level #12. rev60 3rd member → fund-heavy 3:1
+
+### #65 `KPL1YP2g` — Special-items × close-range (EARNINGS-QUALITY transitory)
+- **expr:** `2*group_rank(ts_rank(fnd6_newa2v1300_spi/(assets+1), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 1.84 · Fitness 1.00 · TO 0.198 · sub 1.27 · **self-corr 0.674 (#39)** · attempts 1
+- **ไอเดีย:** special-items/assets (Burgstahler) = transitory earnings component. 🔑 rev10 version ชน #45 NOA 0.786 (rev10 saturated ~10) → ย้าย close-range หลุด (NICHE-RESCUE)
+
+### #66 `6XEkqw1O` — Foreign-income-share × VWAP (FOREIGN-OPERATIONS)
+- **expr:** `3*group_rank(ts_rank(fnd6_pifo/(abs(fnd6_newa2v1300_pi)+1), 252), sector) + rank((vwap-close)/(vwap+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.28 · Fitness 1.76 · TO 0.145 · sub 1.65 · **self-corr 0.6792 (margin 0.021, #36)** · attempts 1
+- **ไอเดีย:** foreign pretax-income share = pifo/total-pretax (accounting segment ≠ mdl177 revenue-exposure RRrzOrEb). loads multinational tilt (near #36 dispersion 0.68 / j2go6pmO 0.65) → fund-heavy 3:1 dilute price-leg (rev60 0.728 / VWAP-2:1 0.714 → 3:1 0.679)
+
+### #67 `mLXv5rJ9` — Earnings-smoothing × close-range (CONSERVATISM Tucker-Zarowin)
+- **expr:** `2*group_rank(-ts_rank(ts_std_dev(income/(assets+1),756)/(ts_std_dev(cashflow_op/(assets+1),756)+0.01), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.18 · Fitness 1.31 · TO 0.195 · sub 1.67 · **self-corr 0.6325 (margin 0.0675, zqWEWEvO)** · attempts 1
+- **ไอเดีย:** NI-vol/CFO-vol ratio ts_rank: LONG companies where earnings smoother than cash flows = informative conservatism (Tucker-Zarowin 2006). ≠ accrual-variance #48 (op accruals vol) ≠ net-margin-vol (income/sales)
+
+### #68 `xAnZ1eAJ` 🟢 SUBMITTED — Net-income-quality × close-range
+- **expr:** `2*group_rank(ts_zscore(income/(abs(operating_income)+0.001), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 1.98 · Fitness 1.13 · TO 0.205 · sub 1.46 · **self-corr 0.614 (margin 0.086 FAT)** · attempts 1
+- **ไอเดีย:** ts_zscore(income/op_income) = below-the-line PURITY ratio. LONG companies where net income is high fraction of operating income vs own history = fewer interest/tax/special charges eating into operating profit. /auto-alpha7
+
+### #69 `QPQ8Yz3g` 🟢 SUBMITTED — Core-earnings-quality × close-range
+- **expr:** `2*group_rank(ts_zscore((income-fnd6_newa2v1300_spi)/(abs(income)+0.001), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.07 · Fitness 1.31 · TO 0.185 · sub 1.35 · **self-corr 0.6832 (margin 0.017 thin, #68)** · attempts 1
+- **ไอเดีย:** ts_zscore((income-special_items)/|income|) = core earnings quality. Removes transitory special items → stable recurring income fraction vs own history. /auto-alpha7
+
+### #70 `A13Az7Ww` 🟢 SUBMITTED — DSO-temporal-quality × VWAP
+- **expr:** `2*group_rank(-ts_zscore(receivable/(sales+0.001), 252), sector) + rank((vwap-close)/vwap)` {INDUSTRY decay4 trunc0.08}
+- **metrics:** Sharpe 2.02 · Fitness 1.26 · TO 0.202 · sub 1.09 · **self-corr 0.6813 (margin 0.0187 thin, #46 sales-growth)** · attempts 1
+- **ไอเดีย:** ts_zscore(-AR/sales) = temporal receivables quality. LONG companies collecting faster vs own history (low AR/sales). DR-analogy: ts_zscore temporal ⊥ group_rank cross-sectional (#28 DSO close-range) similar to DR #50 ts_rank ⊥ #8 group_rank (0.52 corr). VWAP niche. /auto-alpha7

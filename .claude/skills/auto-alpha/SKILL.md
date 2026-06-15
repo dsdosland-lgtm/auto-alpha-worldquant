@@ -32,13 +32,15 @@ description: หา alpha ที่ submit ได้แบบ autonomous goal-mo
 - peek `data/tried-registry.jsonl` (กัน sim ซ้ำ — grep expr/แนวคิดก่อน sim ใหม่).
 
 ### 1. PICK VEIN (เรียงตาม ROI จริง /auto-alpha 11 ตัว #35-45 — ลองบนสุดก่อน, สลับเมื่อ saturate)
-> 🔑 **หลักการบน pool หนา: 1 fundamental → หลาย alpha** ผ่าน 4 ตัวคูณ — **price-niche × weight/sign × CONSTRUCTION (group_rank↔ts_rank) × window**. ความหลากหลายมาจาก transform/construction ไม่ใช่หา fundamental ใหม่อย่างเดียว
+> 🔑 **หลักการบน pool หนา: 1 fundamental → หลาย alpha** ผ่านตัวคูณ — **price-niche(rev10/close-range/VWAP/rev60/rev90+) × weight/sign × CONSTRUCTION(group_rank↔ts_rank↔ts_zscore↔ts_av_diff) × window**. ความหลากหลายมาจาก transform/construction ไม่ใช่หา fundamental ใหม่อย่างเดียว
+> 🆕🔑🔑 **SATURATION-AWARE ORDERING (pool 50+, #57 พิสูจน์):** fresh-fundamental hunt อิ่มแล้ว (เสีย ~10 sims/รอบ ไล่ core ที่ sub-fail/dim-booked) → **นำด้วย AXIS-EXPANSION ก่อน: (a) construction ใหม่ (ts_zscore/ts_av_diff) บน fund ที่ work/booked อยู่แล้ว (b) price-niche horizon ใหม่ (rev60/90/120).** เอา core ที่ผ่าน IS แล้ว + เปลี่ยน axis = ROI สูงกว่าหา fundamental ใหม่ที่ไม่รู้ว่า sub-fail/ชน dim ไหน
 
 **1. 🥇 INTERPOLATION — strong attractor-locked core × price-niche** (#35, breakthrough #10):
 - แหล่ง core แข็ง: `data/near-miss.md §CONDITIONAL` bench (`npWqOj3a` abnormal-capex ฯลฯ) → **interpolate × price ได้เลย ไม่ต้องรอ OS-fail** (#35: locked 0.72→0.647) · attractor list ใน lessons §0/mechanism-map
-- recipe: `<w>*group_rank(<core>, sector) + rank(<price>)`, `<price>` 3 niche (ว่างสุดก่อน): `rank((vwap-close)/vwap)` VWAP · `rank(-(close-low)/(high-low))` close-range · `rank(-ts_delta(close,10))` rev10 (10 ไม่ใช่ 5 กัน e72Vl8LO)
+- recipe: `<w>*group_rank(<core>, sector) + rank(<price>)`, `<price>` 4 niche (เลือกตาม saturation + TO-need): `rank(-ts_delta(close,60))` **🆕 rev60 = price-niche ที่ 4 สดสุด TO ต่ำ (breakthrough #12 — ใช้เมื่อ rev10 ชน + core กลางๆ ต้องการ TO ต่ำ)** · `rank((vwap-close)/vwap)` VWAP · `rank(-(close-low)/(high-low))` close-range · `rank(-ts_delta(close,10))` rev10. ⚠️ **rev10 cluster อิ่มเต็ม ~10 สมาชิก — fresh core × rev10 ชน 0.73-0.88; close-range/VWAP TO สูง = fitness-fail สำหรับ core กลางๆ → rev60 หลุดทั้งคู่ (inventory rev10 0.73→rev60 0.60)**. horizon rev90/rev120 ยังว่าง; rev20 อ่อน (S 1.0-1.1 เลี่ยง)
 
-**2. 🥈 ts_rank CONSTRUCTION-AXIS** (#41-50, breakthrough #11 — ให้ **10 ตัว!**): `2*group_rank(ts_rank(<ratio>, 252), sector) + rank(<price>)`. **ts_rank (temporal-percentile "เทียบประวัติตัวเอง") ⊥ group_rank pool 0.4-0.6** (pool เป็น group_rank ล้วน).
+**2. 🥈 CONSTRUCTION-AXIS — ts_rank #41-50 (breakthrough #11) + ts_zscore #57 (breakthrough #12):** `2*group_rank(ts_rank(<ratio>, 252), sector) + rank(<price>)`. **ts_rank (temporal-percentile "เทียบประวัติตัวเอง") ⊥ group_rank pool 0.4-0.6** (pool เป็น group_rank ล้วน).
+   - 🆕🔑 **ts_zscore(<ratio>,252) = construction ที่ 2 — boost Sharpe เหนือ ts_rank (breakthrough #12: inventory-turnover ts_rank 1.45 → ts_zscore 1.91)** ⊥ group_rank/ts_rank pool เช่นกัน. ลองทั้ง ts_rank + ts_zscore ของ fresh fund (ต่าง construction = อาจ orthogonal กัน); ts_av_diff = axis 4 ยังไม่ได้ลองบน fundamental
    - 🔑 **DIFFERENTIATION มาจาก CONSTRUCTION ไม่ใช่ window — `1 fundamental × 1 construction = 1 alpha`** (auto-alpha5: window 504 ชน 252-version 0.83; **แต่ group_rank vs ts_rank ของ fund เดียวกัน orthogonal ได้** = deferred-rev kqKv0bZg-grouprank vs ts_rank#50 = 0.52). **อย่าเสีย sim กับ window-variant ของ fund ที่ submit แล้ว**
    - 🔑 **dim ที่หลุดสะอาด = fresh STRUCTURAL/quality/equity-issuance/demand/growth** (debt-maturity-ST-share 0.59 · accrual-variance 0.63 · share-dilution 0.68 · deferred-rev 0.52 · sales-growth 0.69). ⛔ **investment/profitability/NOA = จอง #41-45 อิ่มแล้ว → ชน 0.74-0.92** (rd-cap/capacity-util/asset-growth/cash-to-debt ชน). อ่อน=turnover/leverage/cash/R&D/value/tax-burden
 
@@ -52,12 +54,14 @@ description: หา alpha ที่ submit ได้แบบ autonomous goal-mo
 - **(corr-dodge)** core orthogonal-moderate (BVPS/forecast-shape) → **fund-heavy 2-3:1**; core ที่ **load attractor เอง** (investment/diversification) → **price-heavy ลง 1:1** (fund ยิ่งมากยิ่งชน attractor; price เจือ lock). run #1: 3:1=0.745→1:1=0.647
 - **(sub-rescue — auto-alpha10)** core ที่ **sub-universe อ่อน standalone** (delta-core/small-cap ICA/ratio กระจุก large-cap: ACI sub0.06, altman 0.04, employee-Δ) → **price-heavy 0.75-1:1 ให้ price leg กู้ sub** (ACI 0.06→1.07, altman→1.33). เกณฑ์: standalone sub < 0.43×Sharpe = ต้อง price-heavy
 - **(niche-switch — auto-alpha5)** corr เฉียด 0.70-0.74 → **ดูว่า binding-constraint เป็นใคร:** ถ้าเป็น **PRICE-cluster member** (alpha ที่ใช้ price-niche เดียวกัน = rev10/close-range) → **ย้าย price-niche แล้วหลุด** (sales-growth rev10 0.74→close-range 0.69 · accrual rev10 0.74→VWAP 0.63 · share-dilution rev10 0.70→close-range 0.68). ถ้าเป็น **same-DIMENSION fundamental** (cash-to-debt ชน NOA 0.88, rd-cap ชน abnormal-capex 0.74) → **dim จองแล้ว, pivot dim ใหม่** (ย้าย niche ไม่ช่วย)
+- 🆕 **(niche-switch แบบ horizon — breakthrough #12)** ถ้า binding=**rev10-cluster member** แต่ close-range/VWAP **fitness-fail** (core กลางๆ TO สูงเกิน) → **ย้าย rev60 (low-TO horizon ใหม่)**: inventory rev10 0.73→rev60 0.60 (rev10 อิ่มเต็มแล้ว ~10 — เป็น default ที่ต้องเลี่ยงสำหรับ fresh core ถ้า fitness ต้องการ TO ต่ำ)
 - INDUSTRY neut ช่วย sub · reversal รวม-additive (Sharpe 2+); magnitude (signed-jump/MAX) รวมอ่อน เลี่ยง
 
 > **ทุก niche ต้อง ⊥ ของจองทั้งหมด** (รวมทุกขา composite). 🔑 **track "DIMENSION ที่จอง" ไม่ใช่แค่ niche:**
-> - ⛔ **dim จองอิ่มแล้ว (strong core ใหม่ที่ load = ชน 0.7-0.92 ทุก niche/construction):** investment · Δ-improvement · profitability · earnings-yield · NOA · opinion · intangible · working-cap(DSO/inventory/ATO) · forecast-shape · value
-> - ✅ **dim ที่ยังหลุด (auto-alpha5 พิสูจน์ 0.52-0.69):** STRUCTURAL(debt-maturity/lease-type) · earnings-QUALITY(accrual-variance) · equity-issuance(share-dilution) · DEMAND(deferred-rev ผ่าน ts_rank) · growth(sales-growth). **heuristic: fresh = non-investment-non-profitability**
-> - 🔑 **CONSTRUCTION differentiate:** group_rank vs ts_rank ของ fund เดียวกัน orthogonal ได้ (deferred-rev kqKv0bZg vs #50 = 0.52) แต่ window ต่างใน construction เดียวกัน ไม่หลุด (debt-maturity 504 ชน 252 = 0.83)
+> - ⛔ **dim จองอิ่มแล้ว (strong core ใหม่ที่ load = ชน 0.7-0.92 ทุก niche/construction):** investment · Δ-improvement · profitability(+GP/SGA-efficiency/markup ชน op-margin #41 0.88) · earnings-yield · NOA(+liquidity quick/current ratio load NOA #45 0.84) · opinion · intangible · working-cap(DSO/inventory-growth/ATO) · forecast-shape · value · coverage-ratio(CFO/X #51-56) · **accruals-quality(Sloan #61/variance #48/net-income #68/core-earnings #69 — ทุก income-vs-CFO construction ชน 0.91 vs #61)** · **earnings-smoothing/income-volatility(#67 conservatism + income-vol 0.78 = same dim)** · DSO-temporal-ts_zscore(AR/sales #70 booked). ⛔ **weak/dead dim ใหม่ (#57+#70):** cash-holdings(sub 0.63 large-cap อ่อน) · leverage ts_rank(Sharpe<1.25)
+> - 🔑 **PRICE-NICHE saturation:** rev10 = อิ่มเต็ม ~10 (เลี่ยงสำหรับ fresh core) · close-range/VWAP = อิ่มปานกลาง + TO สูง(fitness-fail core กลางๆ) · **rev60 = สดสุด (booked 1: #57 inventory-turnover) · rev90/rev120 ว่าง**
+> - ✅ **dim ที่ยังหลุด:** STRUCTURAL(debt-maturity) · equity-issuance(share-dilution) · DEMAND(deferred-rev ผ่าน ts_rank) · growth(sales-growth). **heuristic: fresh = non-investment-non-profitability-non-accruals**. ⛔ ปิดแล้ว: lease-type FAIL(mrc fields ไม่มี); accruals-quality ปิด(#48/#61/#68/#69 = family เต็ม)
+> - 🔑 **CONSTRUCTION differentiate:** group_rank vs ts_rank ของ fund เดียวกัน orthogonal ได้ (deferred-rev kqKv0bZg vs #50 = 0.52) แต่ window ต่างใน construction เดียวกัน ไม่หลุด (debt-maturity 504 ชน 252 = 0.83). ⚠️ **ts_av_diff(<fund>) ≈ ts_rank(<fund>) เดียวกัน (corr 0.83)** → ts_av_diff orthogonal เฉพาะเมื่อ apply กับ fundamental คนละตัว (auto-alpha7: cost-of-debt ts_av_diff ชน ts_rank 0.83)
 
 ⛔ **DON'T-BOTHER (พิสูจน์ปิดแล้ว /auto-alpha10 ~40 sims — อย่าเสีย sim ซ้ำ):**
 - **tier** EUR/CHN/GLB/ASI/JPN/KOR = "not available" (บัญชี USA-only)
@@ -70,7 +74,7 @@ description: หา alpha ที่ submit ได้แบบ autonomous goal-mo
 ### 2. GENERATE candidates
 - เลือก core เองจาก vein 1-3 (bench/attractor + ts_rank + Δ-trajectory) ก่อน — เร็วสุด.
 - **known cores หมด → spawn `alpha-researcher` `run_in_background:true`** (web-literature mining) แล้ว **ทดสอบ vein อื่น/construction-axis ระหว่างรอ (อย่า idle)**. ~2 wins ต่อ 10-12 cores; **รันหลาย batch ได้** (auto-alpha10: 3 batch → intangible Peters-Taylor / altman-health / employee-Δ / ΔDPO).
-  - prompt researcher แนบ: (1) **dimension ที่จองทั้งหมด** (รวมทุกขา composite) (2) family/dim ปิดล่าสุดจาก lessons §0 + DON'T-BOTHER (3) **เน้นขอ: fundamental ในมิติ STRUCTURAL / earnings-quality / equity-issuance / demand / governance / supply-chain — ที่ NOT investment/profitability/growth** (auto-alpha5: 4 wins จากแนวนี้ = debt-maturity/accrual-quality/share-dilution/deferred-rev; ⛔ investment/profitability dim จองอิ่มแล้ว ชน) (4) INTERPOLATION-CORE rule (attractor-locked 0.7-0.8 ใช้ได้)
+  - prompt researcher แนบ: (1) **dimension ที่จองทั้งหมด** (รวมทุกขา composite) (2) family/dim ปิดล่าสุดจาก lessons §0 + DON'T-BOTHER (3) **เน้นขอ: fundamental ในมิติ STRUCTURAL / earnings-quality / equity-issuance / demand / governance / supply-chain — ที่ NOT investment/profitability/growth** (auto-alpha5: 4 wins จากแนวนี้ = debt-maturity/accrual-quality/share-dilution/deferred-rev; ⛔ investment/profitability dim จองอิ่มแล้ว ชน). ⛔🆕 **ระวัง proxy แฝง (#57 พิสูจน์เสีย sims):** efficiency-ratio (GP/SGA, markup, gross-margin) = profitability ชน op-margin #41 0.88 · liquidity/cash (current/quick ratio, cash/assets) = NOA-load #45 0.84 หรือ sub-fail large-cap · leverage ts_rank = Sharpe<1.25 อ่อน — เหล่านี้ "ดูสด" แต่ load dim ที่ booked (4) INTERPOLATION-CORE rule (attractor-locked 0.7-0.8 ใช้ได้)
   - SIDE-CAR: researcher **Write ไฟล์เดียว `data/<batch>-cores.jsonl`** (`{core,field,expr,dim,verified}` บรรทัดละ core) — orchestrator อ่านเอง + เลือก verified:true ที่ field พร้อม sim ก่อน
 - spawn **alpha-translator** เฉพาะ expression ซับซ้อน/field แปลก; fundamental ratio ปกติ construct เองเร็วกว่า (lessons §4 รอบ 49)
 
@@ -84,6 +88,10 @@ description: หา alpha ที่ submit ได้แบบ autonomous goal-mo
 - transient (504/5xx/timeout/400 proxy) → retry 1-2 ครั้ง; sim ที่ timeout ฝั่ง client **ยังรันต่อฝั่ง BRAIN** → ตามด้วย check_simulation/list_alphas อย่า sim ซ้ำ.
 
 ### 4. EVALUATE
+- 🆕🔑🔑 **CORR-FIRST SCREEN (core ใหม่ที่ยังไม่พิสูจน์ — #57 เสีย ~10 sims เพราะ tune fitness ก่อนเช็ค corr):** sim baseline 1 ตัว (2:1 niche ธรรมชาติ) → **อ่าน `get_self_correlation` ฟรีทันที (ไม่ต้องรอ fitness ผ่าน — corr วัดบน signal vector ไม่ใช่ IS-gate)** → ดู binding dim:
+  - **>0.85 = dim booked → PIVOT core เลย (อย่า tune fitness เสียเปล่า)** — เคส GP/SGA tune ถึง fit 1.02 ก่อนพบ corr 0.88 vs #41 = เสีย 2-3 sims
+  - **0.70-0.84 = axis-switch ก่อนทิ้ง:** ts_zscore construction / rev60-horizon price-niche / weight-sweep (inventory rev10 0.73→rev60 0.60)
+  - **<0.70 = ค่อยลงทุน tune fitness** (คุ้ม — core หลุดแล้ว)
 - **PASS IS ครบ** (fitness≥1.0, Sharpe≥1.25, sub-universe≈0.43×Sharpe, LOW_TURNOVER, CONCENTRATED_WEIGHT) → เรียก `get_self_correlation` (+ `get_alpha.is.selfCorrelation` fallback ถ้า endpoint คืน empty).
   - ⚙️🔑 **get_self_correlation = อ่านฟรี (read-only) → เรียกบน variant ที่ผ่าน IS ได้ทุกตัว** เพื่อ map corr-vs-weight curve + ดู binding-constraint (corr records บอกว่าชน alpha ตัวไหน) **แล้วค่อยเลือก 1 ตัวไป submit** (ต่างจาก submit_alpha ที่ probe ทีละตัว). run #1 เช็ค corr 6 variant ฟรีก่อน submit ตัวเดียว.
   - max corr **< 0.70 จริง** → **เลือก variant ที่ margin หนาสุด** (sweep weight/niche เก็บตัวต่ำสุด) — self-corr ขยับได้ตอน recompute (leak RRrE1VNj 0.84). run #1 เลือก 1:1 (0.647) แทน 1.25:1 (0.689). 📏 **margin reality บน pool อิ่ม:** มัก 0.01-0.07; **ยอม thin (0.01-0.02) ได้ถ้า (ก) เป็น dimension/construction ใหม่จริง ไม่ใช่ near-miss ของ attractor ที่รู้ (ข) เป็นตัวดีสุดที่ sweep แล้ว** (auto-alpha10 #44/#45 submit ที่ 0.018/0.011 = ผ่านสะอาด). ⛔ ตัวที่ใกล้ attractor เดิม + margin บาง = เสี่ยง leak ตัดทิ้ง.
@@ -119,7 +127,7 @@ description: หา alpha ที่ submit ได้แบบ autonomous goal-mo
   - ครบ 4 axis + ยังไม่ได้ → รายงานตรงๆ ว่าได้ M<N (อย่าแต่งว่าครบ).
 
 ### 8. FINAL (เมื่อครบ N หรือยืนยันตันจริง)
-- เขียน `data/runs/<วันที่>-report.md` — **ต้องมีบรรทัด machine-readable `submitted: N`** ใกล้หัวไฟล์ + ตารางตัวที่ submit (alpha_id/กลไก/Sharpe/fitness/corr).
+- เขียน `data/runs/<วันที่>-report.md` — **ต้องมี 2 บรรทัด machine-readable ใกล้หัวไฟล์**: `submitted: N` + `queued: 0` (กัน streak counter นับ /auto-alpha report เป็น "ไฟล์ที่ข้าม") + ตารางตัวที่ submit (alpha_id/กลไก/Sharpe/fitness/corr).
 - entry เต็ม (เส้นทาง+บทเรียน) ต่อท้าย `knowledge/lessons-archive.md`; one-liner ลง `lessons-learned.md` หมวดที่ถูก (§0/§1/§2/§3/§4).
 - **INTEGRITY CHECK:** รัน `node .claude/skills/improve-system/metrics.js` → ยืนยัน [0] DATA INTEGRITY: `submitted.jsonl == registry-bucket` (ไม่ desync), ไม่มี dup id.
 - สรุปผลให้ผู้ใช้: submit กี่ตัว / กลไก / pool รวมเท่าไร / vein ที่เปิดต่อ.

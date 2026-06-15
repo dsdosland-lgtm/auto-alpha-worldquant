@@ -102,6 +102,50 @@
 
 **🆕🔑 /auto-alpha10 — Δ-TRAJECTORY VEIN (5 submit #36-40):** `group_rank(ts_delta(ratio,252)YoY,sector)+rank(price)` price-heavy 0.75-1:1. **LEVEL จอง/ตาย → YoY-DELTA หนี attractor หลุด.** #38 altman-health-Δ · #39 Δ(sales/employee) · #40 ΔDPO (close-range) + #36 dispersion × VWAP (opinion) + #37 intangible-stock × VWAP (Peters-Taylor). ⛔ **close-range Δ-improvement cluster อิ่มที่ 3** — Δ-margin/gross/cash/goodwill/book-leverage ใหม่ชน altman#38/DPO#40 ที่ 0.77-0.91 ("improving-company × reversal" = factor เดียว). ⛔ **VWAP/rev10 ก็ชน** (goodwill→abnormal-capex#35 0.79 / inventory#26 0.80 = investment-dim). 🔒 **USA-d1 ตัน 5/10: ทุก strong core load 1 ใน factor จอง (investment/Δ-improvement/opinion/intangible/working-cap/forecast/value/quality).** ทางต่อ: TOP500-native composite (goal5) / OS-fail / freeze
 
+**🆕🔑🔑🔑🔑 /auto-alpha #57 BREAKTHROUGH #12 — `rev60` = PRICE-NICHE ที่ 4 (เปิด cluster ใหม่ หลบ rev10 ที่อิ่ม):** #57 `QPQxwbb5` = `2*group_rank(ts_zscore(cogs/(inventory+1),252),sector) + rank(-ts_delta(close,60))` {INDUSTRY decay2 trunc0.08} 1.62/1.24 TO 0.078 corr **0.5981 margin 0.10**. 🔑 **rev10 cluster อิ่มเต็ม ~10 สมาชิก** — fresh fundamental × rev10 ชน 0.73-0.88 ทุกตัว (inventory-turnover→#41 op-margin 0.73-0.76 ทุก construction · quick-ratio→#45 NOA 0.836 · GP/SGA→#41 0.88). **ทางหลุด = price-niche horizon ใหม่: rev60 (3-month reversal, TO ต่ำ) → corr ร่วง 0.73→0.60** (rev20 อ่อน S 1.0-1.1; close-range/VWAP fitness-fail TO สูง สำหรับ core กลางๆ). 🔑🔑 **ts_zscore construction = lever boost Sharpe (inventory 1.45→1.91 > ts_rank)** ⊥ group_rank/ts_rank pool — construction axis ที่ 4. ⛔ dim ปิดเพิ่ม: GP/SGA=profitability(#41), cash-holdings sub-fail 0.63, leverage ts_rank S 1.00, liquidity=NOA-load(#45). **เปิด: rev60-niche ว่าง (pair กับ fresh core อื่นได้) + ts_zscore × fresh fund**
+
+**🆕🔑🔑🔑🔑 /auto-alpha4 #58-61 — ACCOUNTING-QUALITY VEIN (TAX/REM/asset-age/Sloan) บน ts_rank×price template:**
+| niche | expr | สถานะ |
+|---|---|---|
+| BOOK-TAX-DIFF × close-range (#58 `O093YWl1`) | `2*group_rank(ts_rank((pretax_income*0.21−income_tax)/(assets+1),252),sector)+rank(-(close-low)/(high-low))` {INDUSTRY decay4} | 🟢 SUBMITTED 2.62/1.61 **corr 0.5576 margin 0.14**. 🔑🔑 TAX DIM ใหม่ทั้งแผง (absent 100%) |
+| REM-overproduction × rev60 (#59 `1YgMbrzJ`) | `2*group_rank(-ts_rank((cogs+ts_delta(inventory,252))/(sales+1),252),sector)+rank(-ts_delta(close,60))` {INDUSTRY decay4} | 🟢 SUBMITTED 1.88/1.46 corr 0.6282. Roychowdhury REM. 2nd rev60 fund-heavy 2:1 |
+| asset-age × VWAP (#60 `LLRQjVO6`) | `2*group_rank(ts_rank((ppegt−ppent)/(ppegt+1),252),sector)+rank((vwap-close)/vwap)` {INDUSTRY decay4} | 🟢 SUBMITTED 1.79/1.08 corr 0.6747. STRUCTURAL accum-deprec (Jiang-Lee) |
+| Sloan total-accruals × VWAP (#61 `akOpv98R`) | `1.5*group_rank(-ts_rank((income−cashflow_op)/(assets+1),252),sector)+rank((vwap-close)/vwap)` {INDUSTRY decay4} | 🟢 SUBMITTED 1.89/1.02 corr 0.6686. NI−CFO ≠ accrual-var #48 |
+
+🔑 **TAX: BTD/assets work (2.62), ETR income_tax/pretax sub-fail large-cap, tlcf dead. asset-age=depreciation-ratio ≠ tangibility-LEVEL ppent/assets (dead 0.54).** ⛔ **net-payout (div+repurchase−issuance) NOT orthogonal** (/cap ชน #23 0.821, /assets ts_rank ชน #55 CFO/assets 0.776) · debt/PPE fit 0.63 · special-items rev10 ชน #45 NOA 0.786. ⛔ **rev90 TOO SLOW dead (Sharpe 1.15)** — rev60=slow-reversal limit; rev60 2nd-member ชน #57 price-leg → fund-heavy 2:1 dilute. เปิด: accounting-quality fresh × niche ที่ไม่ใช่ rev10(saturated)
+
+**🆕🔑🔑🔑🔑 /auto-alpha5 #62-66 — ACCOUNTING-QUALITY + STRUCTURAL VEIN (5 fresh dim, 19 sims):**
+| niche | expr | สถานะ |
+|---|---|---|
+| COST-OF-DEBT × close-range (#62 `e7rjgA8J`) | `2*group_rank(ts_rank(interest_expense/(debt_st+dltt+1),252),sector)+rank(-(close-low)/(high-low))` | 🟢 SUBMITTED 2.27/1.34 corr 0.613. avg borrowing-rate (Frank-Goyal) ≠ interest-coverage #52. rev60 fit 0.87→close-range |
+| ABNORMAL-DEPRECIATION × VWAP 1:1 (#63 `mLXv2qj9`) | `1*group_rank(-ts_rank(depre_amort/(ppent+1),252),sector)+rank((vwap-close)/vwap)` | 🟢 SUBMITTED 2.16/1.10 corr 0.6616. deprec-RATE flow ≠ asset-age #60 stock. price-heavy 1:1 fix sub |
+| SGA-COST-STICKINESS × rev60 3:1 (#64 `j2g7dQW9`) | `3*group_rank(ts_rank((ΔSGA%/(ΔSales%+0.1)),252),sector)+rank(-ts_delta(close,60))` | 🟢 SUBMITTED 1.71/1.26 corr 0.6653. ratio-of-changes 2nd-order asymmetry (Anderson-Banker) ≠ DOL #56 |
+| SPECIAL-ITEMS × close-range (#65 `KPL1YP2g`) | `2*group_rank(ts_rank(fnd6_newa2v1300_spi/(assets+1),252),sector)+rank(-(close-low)/(high-low))` | 🟢 SUBMITTED 1.84/1.00 corr 0.674. Burgstahler transitory. rev10 ชน #45 NOA 0.786→close-range rescue |
+| FOREIGN-INCOME-SHARE × VWAP 3:1 (#66 `6XEkqw1O`) | `3*group_rank(ts_rank(fnd6_pifo/(abs(pi)+1),252),sector)+rank((vwap-close)/vwap)` | 🟢 SUBMITTED 2.28/1.76 corr 0.6792. pifo/pretax accounting-segment ≠ mdl177 revenue-exposure. loads multinational tilt→3:1 dilute |
+
+🔑 **NICHE-RESCUE: fresh dim corr-fail บน niche หนึ่ง → หลุดบน niche อื่น** (special-items rev10 0.786→close-range 0.674; cost-of-debt rev60 fit-fail→close-range; foreign-income rev60/VWAP-2:1 0.71-0.73→3:1 0.679). 🔑 **rev60 อิ่มขึ้น 3 members (#57/#59/#64)** → member ที่ 2:1 ชน price-leg ~0.72, ต้อง fund-heavy 3:1. ⛔ ปิด: cash-ETR(sub-fail+0.753), deferred-tax(dead), REM-discexp-SGA(dead), inventory-FG-ratio(fitness stuck), CCC-VOLATILITY(0.724 ชน #48/#35 operating-vol), pension-funded ts_rank(fit 0.72), acquired-intangibles(dead). เปิด: ~~lease-duration~~ (**FAIL** vec_avg(fnd6_mrc1) ทุก variant — sparse/MATRIX incompatible), ~~conservatism~~ (**CLOSED #67** earnings-smoothing NI-vol/CFO-vol submitted), ~~supply-chain~~ (**FAIL** ไม่มี field ที่ใช้ได้). ⛔ **dim เหล่านี้ปิดทั้งหมด**; change-in-OLL mdl177_2_managementqualityfactor_chgollev = FAIL
+
+**🆕 /auto-alpha6 #67 — CONSERVATISM VEIN (1 sim → 1 submit):**
+| EARNINGS-SMOOTHING × close-range (#67 `mLXv5rJ9`) | `2*group_rank(-ts_rank(ts_std_dev(income/(assets+1),756)/(ts_std_dev(cashflow_op/(assets+1),756)+0.01),252),sector)+rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4} | 🟢 SUBMITTED 2.18/1.31 corr 0.6325. NI-vol/CFO-vol 756d ts_rank — LONG income smoothers (Tucker-Zarowin 2006 informative conservatism). binding zqWEWEvO. จอง: earnings-smoothing/conservatism |
+
+**🆕🔑 /auto-alpha7 #68-70 — EARNINGS-QUALITY RATIO + DSO-TEMPORAL (ts_zscore construction):**
+| NET-INCOME-QUALITY × close-range (#68 `xAnZ1eAJ`) | `2*group_rank(ts_zscore(income/(abs(operating_income)+0.001),252),sector)+rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4} | 🟢 SUBMITTED 1.98/1.13 corr 0.614. ts_zscore(income/op_income) = below-the-line purity. จอง: income/op_income ratio |
+| CORE-EARNINGS-QUALITY × close-range (#69 `QPQ8Yz3g`) | `2*group_rank(ts_zscore((income-fnd6_newa2v1300_spi)/(abs(income)+0.001),252),sector)+rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4} | 🟢 SUBMITTED 2.07/1.31 corr 0.6832. ts_zscore((income−spi)/|income|). จอง: core-earnings-quality |
+| DSO-TEMPORAL-QUALITY × VWAP (#70 `A13Az7Ww`) | `2*group_rank(-ts_zscore(receivable/(sales+0.001),252),sector)+rank((vwap-close)/vwap)` {INDUSTRY decay4} | 🟢 SUBMITTED 2.02/1.26 corr 0.6813. ts_zscore(-AR/sales) temporal ⊥ group_rank(-DSO) cross-sectional #28 (DR-analogy). VWAP. จอง: DSO-temporal-quality |
+
+**🆕 /auto-alpha8 #71 — TAX-ETR-VOLATILITY (2nd-order construction on TAX channel):**
+| TAX-ETR-VOLATILITY × close-range (#71 `XgKdrnr8`) | `2*group_rank(-ts_rank(ts_std_dev(income_tax/(abs(pretax_income)+1), 756), 252), sector) + rank(-(close-low)/(high-low+0.001))` {INDUSTRY decay4 trunc0.08} | 🟢 SUBMITTED 1.87/1.13 corr 0.6548. ts_std_dev(ETR,756d) ts_rank: LONG companies with STABLE effective tax rate historically. TAX channel of Tucker-Zarowin 2006 (mirrors #67 NI-vol/CFO-vol). binding qMXJzKrO #46. จอง: ETR-volatility / tax-expense-stability |
+
+⛔ **ETR SIMPLE TEMPORAL = weak:** ts_rank(income_tax/pretax_income,252) IS FAIL Sharpe 1.07 (large-cap sub-fail)
+⛔ **PENSION PBO GROWTH = sparse:** IS FAIL Fitness 0.67 (fnd2_dbplanbnfol sparse in TOP3000)
+⛔ **EFFICIENCY/ATO/FIXED-CAPITAL cluster = ปิดสมบูรณ์ทุก niche:** ATO ts_zscore — rev60 0.7898/#57 / close-range 0.7793/#46 / VWAP 0.99 IS FAIL. PP&E turnover — rev60 0.7393/#57 / VWAP 0.8303/#44. PP&E intensity — VWAP 0.7863/#35+#29. Fixed-capital efficiency loads investment-cluster. All niches exhausted.
+
+⛔ **ACCRUALS FAMILY FULLY SATURATED (#68-70 รอบนี้ปิดช่องสุดท้าย):** total-accruals #61 · accrual-variance #48 · income-quality #68 · core-earnings #69 · op-accruals ts_zscore (0.91 vs #61) · earnings-smoothing #67 · CFO/sales (0.73 vs #61) — ห้ามลองสัญญาณที่ใช้ (income vs CFO) หรือ accruals ทุกรูปแบบอีก
+⛔ **GROSS MARGIN = PROFITABILITY PROXY (0.74-0.88 ชน #41/#44 op-margin):** within INDUSTRY-neut, SGA/sales stable → gross_margin ≈ op_margin + constant → ts_zscore/ts_rank ของ gross_margin เท่ากับ op_margin เชิงสัญญาณ — ห้ามลอง gross_margin เป็น fresh dim
+⛔ **DPO LEVEL = ΔDPO DIM:** ts_zscore(AP/cogs) 0.79 vs #40 ΔDPO; payables-timing dim ครอบทั้ง level และ change
+⛔ **INCOME MARGIN VOLATILITY = EARNINGS-SMOOTHING DIM:** ts_zscore(ts_std_dev(income/sales,756)) 0.78 vs #67; denominator sales vs assets ไม่พอแยก dim
+🔑 **DR-ANALOGY CONFIRMED: ts_zscore temporal ⊥ group_rank cross-sectional ของ ratio เดียวกัน** — #70 DSO ts_zscore vs #28 DSO group_rank corr 0.64 (ต่ำ, ผ่าน) เหมือน #50 DR ts_rank vs #8 DR group_rank (0.52)
+
 ## 🏁 Goal-mode 2026-06-12 (ตัวที่ 7-10 — niche #7-10 จองครบ)
 | composite | expr ย่อ | สถานะ |
 |---|---|---|
